@@ -11,7 +11,22 @@ load_dotenv()
 MISTRAL_API_KEY = os.environ["MISTRAL_API_KEY"]
 
 def main(args):
-    """Initializes and monitors a fine-tuning job on the Mistral AI La Platforme."""
+    """
+    Initializes and monitors a fine-tuning job on the Mistral AI La Platforme.
+    
+    Args:
+        args: command-line arguments, expected to have the following attributes:
+            - train_path (str): The local file path to the training dataset.
+            - eval_path (str): The local file path to the evaluation dataset.
+            - base_model_finetuning (str): The identifier for the base model to be fine-tuned.
+
+    Raises:
+        FileNotFoundError: If the specified training or evaluation files do not exist.
+        
+    Notes:
+        - The function requires the 'MISTRAL_API_KEY' environment variable to be set for authentication.
+    """
+    
     
     client = Mistral(api_key=MISTRAL_API_KEY)
 
@@ -56,7 +71,6 @@ def main(args):
     if retrieved_job.status == "SUCCESS":
         print("Finetung status: SUCCESS")
         print(f"model id: {retrieved_job.fine_tuned_model}")
-        os.environ['FINE_TUNED_MODEL_ID'] = retrieved_job.fine_tuned_model
 
 if __name__ == "__main__":
     

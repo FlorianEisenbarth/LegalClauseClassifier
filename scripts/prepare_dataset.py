@@ -23,7 +23,24 @@ with open("data/CUAD_v1/CUAD_v1.json") as f:
     
 
 def prepare_finetuning_dataset_classification_balanced():
-    """Prepares a balanced dataset for a classification task from the CUAD dataset."""
+    """
+    Prepares a balanced dataset for a classification task
+    from the CUAD dataset.
+
+    This function processes the CUAD v1 dataset to create a new dataset
+    for fine-tuning a model. It balances the number of samples per clause type
+    to a maximum of 300, and formats the data for a classification task.
+    The final dataset is splitted and saved into a train, eval and test set,  
+    respectively into
+    dataset/cuad_classification_train_balanced.jsonl
+    dataset/cuad_classification_train_balanced.jsonl
+    dataset/cuad_classification_train_balanced.jsonl
+    Notes:
+        - The function relies on some global variables: `cuda_v1` (the loaded CUAD dataset),
+          PROMPTS (dict of prompts)
+        - The `MAX_SAMPLES_PER_CLAUSE` is hard-coded to 300 to ensure a balanced dataset.
+        - This function does not return any value; it writes its output directly to files.
+    """
 
     samples_by_clause = defaultdict(list)
 
@@ -84,7 +101,26 @@ def prepare_finetuning_dataset_classification_balanced():
 
     
 def prepare_dataset_classification_sumarization_balanced():
-    """Prepares a balanced dataset for a combined classification and summarization task from the CUAD dataset."""
+    """
+    Prepares a balanced dataset for a combined classification and summarization task
+    from the CUAD dataset.
+
+    This function processes the CUAD v1 dataset to create a new dataset
+    for fine-tuning a model. It balances the number of samples per clause type
+    to a maximum of 300, generates a summary for each clause using the Mistral
+    API, and formats the data for a combined classification and summarization task.
+    The final dataset is splitted and saved into a train, eval and test set,  
+    respectively into
+    dataset/cuad_classification_summary_train_balanced.jsonl
+    dataset/cuad_classification_summary_eval_balanced.jsonl
+    dataset/cuad_classification_summary_test_balanced.jsonl 
+
+    Notes:
+        - The function relies on some global variables: `cuda_v1` (the loaded CUAD dataset),
+          `client` (the Mistral API client), PROMPTS (dict of prompts)
+        - The `MAX_SAMPLES_PER_CLAUSE` is hard-coded to 300 to ensure a balanced dataset.
+        - This function does not return any value; it writes its output directly to files.
+    """
 
     samples_by_clause = defaultdict(list)
 

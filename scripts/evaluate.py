@@ -10,8 +10,20 @@ import numpy as np
 from tqdm import trange
 
 
-def load_data(file_path):
-    """ Loads ground truth and prediction clause type from a JSONL file."""
+def load_data(file_path) -> tuple:
+    """
+    Loads ground truth and prediction data from a JSONL file.
+
+    Args:
+        file_path (str): The path to the input JSONL file.
+
+    Returns:
+        tuple: A tuple containing four NumPy arrays in the following order:
+            - y_true_clauses (np.array): The ground truth clause types.
+            - y_true_summary (np.array): The ground truth summaries.
+            - y_pred_clause (np.array): The predicted clause types.
+            - y_pred_summary (np.array): The predicted summaries.
+    """
     y_true_clauses, y_pred_clause = [], []
     y_true_summary, y_pred_summary = [], []
     with open(file_path, "r", encoding="utf-8") as f:
@@ -22,7 +34,7 @@ def load_data(file_path):
             pred_clause = json.loads(obj["prediction"])["clause_type"].strip().lower()
             gt_summary = json.loads(obj["ground_truth"])["summary"].strip().lower()
             pred_summary = json.loads(obj["prediction"])["summary"].strip().lower()
-            
+
             y_true_clauses.append(gt_clause)
             y_pred_clause.append(pred_clause)
             y_true_summary.append(gt_summary)
@@ -34,7 +46,21 @@ def evaluate_summarization(y_true_base: list,
                             y_true_impr: list, 
                             y_pred_base: list, 
                             y_pred_impr: list,
-                            output_file: str):
+                            output_file: str) -> None:
+    """
+    Evaluates and compares the summarization performance between a baseline and an improved model.
+    
+    This function calculates ROUGE-1, ROUGE-L and BLEU scores to compares the performances beetween
+    a base and a finetuned model. The scores are saved in a text file.
+
+    Args:
+        y_true_base (list): A list of ground truth labels for the baseline model.
+        y_true_impr (list): A list of ground truth labels for the improved model.
+        y_pred_base (list): A list of predicted labels from the baseline model.
+        y_pred_impr (list): A list of predicted labels from the improved model.
+        output_file (str): The path to the directory where the output file
+                           'summarization_analysis.txt' will be saved.
+    """
 
     assert np.array_equal(y_true_base, y_true_impr), "Ground truth mismatch between files"
     
@@ -59,9 +85,26 @@ def evaluate_classification(y_true_base: list,
                             y_true_impr: list, 
                             y_pred_base: list, 
                             y_pred_impr: list,
-                            output_file: str):
-    """evaluate classification performance between a base and an improved model"""
-    
+                            output_file: str) -> None:
+    """
+    Evaluates and compares the classification performance between a baseline and an improved model.
+
+    This function calculates F1-scores (micro, macro, weighted) and performs a
+    bootstrap significance test to determine if the improved model is statistically
+    superior to the baseline. The detailed analysis is saved to a text file.
+
+    Args:
+        y_true_base (list): A list of ground truth labels for the baseline model.
+        y_true_impr (list): A list of ground truth labels for the improved model.
+        y_pred_base (list): A list of predicted labels from the baseline model.
+        y_pred_impr (list): A list of predicted labels from the improved model.
+        output_file (str): The path to the directory where the output file
+                           'classification_analysis.txt' will be saved.
+
+    Raises:
+        AssertionError: If the ground truth labels for the two models do not match.
+
+    """
     labels = list(set(y_true_base))
 
   

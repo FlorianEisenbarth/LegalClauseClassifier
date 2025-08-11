@@ -13,8 +13,30 @@ load_dotenv()
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-def run_inference(client: Mistral, model: str, messages_list: list):
-    """Perform inference on a list of messages using the provided model."""
+def run_inference(client: Mistral, model: str, messages_list: list) -> list[dict]:
+    """
+    Performs inference on a list of message samples using a specified Mistral model.
+
+    This function iterates through each sample in the provided list,
+    sends the messages (excluding the final ground truth) to the Mistral
+    API for a chat completion, and collects the model's predictions.
+
+    Args:
+        client (Mistral): An authenticated client object for the Mistral AI API.
+        model (str): The identifier of the model to use for inference. This must be
+                    a Mitral model ID 
+        messages_list (list): A list of dictionaries, where each dictionary
+                            represents a single inference sample. Each sample
+                            must contain a key 'messages' which holds the
+                            conversation history.
+
+    Returns:
+        list: A list of dictionaries, where each dictionary contains the
+              'input' (the messages sent to the model), 'ground_truth'
+              (the expected response), and 'prediction' (the model's output).
+              If an error occurs, 'prediction' will be None and an 'error'
+              key will be included.
+    """
     outputs = []
     for sample in tqdm(messages_list, desc="Running inference", position=0, leave=True):
         try:
@@ -38,8 +60,22 @@ def run_inference(client: Mistral, model: str, messages_list: list):
             })
     return outputs
 
-def inference_finetuned(args):
-    """Main entry point for inference."""
+def main(args):
+    """
+    Main entry point for inference.
+    
+    This function orchestrates the entire inference workflow and save
+    the prediction into a JSONL file.
+    
+    Args:
+        args: command-line arguments. Expected attributes are:
+              - test_file (str): The path to the test dataset in JSONL format.
+              - model_id (str): The Mistral ID of the fine-tuned model to use.
+              - output_path (str): The path to save the prediction results in JSONL format.
+
+    Raises:
+        EnvironmentError: If the 'MISTRAL_API_KEY' environment variable is not set.
+    """
     mistral_key = os.getenv("MISTRAL_API_KEY")
     if mistral_key is None:
         raise EnvironmentError("Please set the MISTRAL_API_KEY environment variable.")
@@ -52,4 +88,4 @@ def inference_finetuned(args):
 
 if __name__ == "__main__":
     args = parse_args_inference()
-    inference_finetuned(args)
+    main(args)
