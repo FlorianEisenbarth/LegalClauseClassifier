@@ -49,7 +49,7 @@ python scripts/finetune_mistral.py --base_model_finetuning ministral-3b-latest
 When the finetuning is over the script will output the finetuned model id
 ### 4. inference with finetuned model
 ```bash
-scripts/inference.py \
+python scripts/inference.py \
     --model_id <model id> \
     --output_path "outputs/finetuned_output.jsonl" \
     --test_file "dataset/cuad_classification_summary_test_balanced.jsonl"  
