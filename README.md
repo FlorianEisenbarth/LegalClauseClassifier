@@ -23,7 +23,7 @@ conda activate LegalClassifier
 
 ### 2. env file
 
-create a .env file and place you Mistral API key inside
+create a .env file at the root of the project and place you Mistral API key inside
 ```bash
 MISTRAL_API_KEY = <your_api_key>
 ```
@@ -56,15 +56,10 @@ scripts/inference.py \
 ```
 ### 5. Evaluation
 ```bash
-python scripts/evalute.py \
-    --predictions_path "outputs/base_output.jsonl" \
-    --references_path "dataset/cuad_classification_summary_test_balanced.jsonl" \
-    --output_path "outputs/eval/base_model"
-
- python scripts/evalute.py \
+python scripts/evaluate.py \
     --predictions_path "outputs/finetuned_output.jsonl" \
-    --references_path "dataset/cuad_classification_summary_test_balanced.jsonl" \
-    --output_path "outputs/eval/finetuned_model"     
+    --references_path "outputs/base_output.jsonl" \
+    --output_path "outputs/eval/"
 
 ```
 
@@ -73,38 +68,54 @@ I decided to push the <code>outputs</code> folder In case you would not have the
 ### Classification Task Evaluation
 The primary goal of this project was to fine-tune a model to accurately classify legal clauses into one of 41 specific types. We compared the performance of our Fine-Tuned Model against a Base Model that struggled with the task, often outputting predictions that did not correspond to any of the 41 valid clause types.
 
-The evaluation was performed on a test dataset with a total of 1664 samples. The results are summarized below.
+The evaluation was performed on a test dataset with a total of 1664 samples.
 
-Key Findings
 The fine-tuned model demonstrated a significant improvement in performance across all key metrics when compared to the base model.
-| Metric         |  Fine-tuned (ministral-3b-latest) |Base Model (ministral-8b-2410) | Analysis | 
-| ---------------| ------------------------------|-----------------------------------|----------|
-| Accuracy       |              **0.70**         |     0.55 (micro avg)              | The fine-tuned model correctly classified nearly 70% of all samples, a 15% increase over the base model
-| Macro avg F1   |              **0.62**         |     0.48                          |This metric gives equal weight to each of the 41 clause types. The fine-tuned model's higher score indicates it performs better, on average, at identifying all different types of clauses, including minority classes.
-| Weighted Avg F1|              **0.68**         |     0.51                          | This metric weights each class by its support (number of samples). The fine-tuned model's higher score shows it is more effective at classifying the most frequent clause types.
 
-#### Anomaly in Base Model Metrics
+|Metric      | Base Model (ministral-8b-2410) | Fine-tuned (ministral-3b-latest) |     Δ F1    |
+-------------|-------------------------------|-----------------------------------|-------------|
+|F1-micro    |          0.53                 |             **0.70**              |    0.17
+|F1-macro    |          0.48                 |             **0.62**              |    0.14
+|F1-weighted |          0.51                 |            **0.68**               |    0.17 
 
-An important observation was the discrepancy between the base model's micro-averaged precision, recall, and F1-score. In a standard multi-class classification problem, these three values are always identical and equal to the overall accuracy.
 
-* Base Model Micro Avg: Precision (0.546), Recall (0.51), F1 (0.53)
 
-* Fine-Tuned Model Accuracy/Micro Avg: 0.70 for all three metrics
+- **Significant overall improvement**:  
+  The micro F1 score increased by approximately 0.14 to 0.19 (95% confidence interval), with a statistically significant p-value (0.0001), confirming that fine-tuning meaningfully enhances classification accuracy.
 
-The differing values for the base model's micro-average metrics are a direct result of it predicting "wrong labels outside of the 41 clauses types." These invalid predictions create a situation where the total number of false positives is not equal to the total number of false negatives, breaking the mathematical equivalence that normally exists between these metrics. This highlights the base model's fundamental failure to adhere to the defined classification task.
+- **Strong per-class gains**:  
+  Major improvements were observed on key clause types such as *document name* (+0.73 F1), *covenant not to sue* (+0.71 F1), and *revenue/profit sharing* (+0.63 F1). This demonstrates the model’s improved ability to correctly identify legal clauses.
+
+- **Consistent improvements across many categories**:  
+  The majority of clause types showed positive gains in F1 scores, indicating a broad enhancement of model performance rather than isolated improvements.
+
+- **Stable performance on some categories**:  
+  Certain clause types retained similar performance levels after fine-tuning, reflecting either a ceiling effect or limited training data variation.
+
+- **Performance drops in a few categories**:  
+  A small number of categories, including *license grant* and *price restrictions*, experienced decreased F1 scores, highlighting areas where additional data, data augmentation, or model tuning, changes may be required.
 
 
 #### Full per-category classification report (all 41 clause types) is available here:
-<code> output/eval/base_model/classification_report.txt** </code>
-<code>output/eval/finetuned_model/classification_report.txt </code>
+<code> output/eval/base_model/classification_analysis.txt** </code>
 
 ### Summarization Task Evaluation
-I also evaluated the models on a text summarization task. ROUGE scores measure the overlap of n-grams between the generated and reference summaries, while BLEU measures the fluency and accuracy of the generated text.
-| Metric         | Fine-tuned (ministral-3b-latest) | Base Model (ministral-8b-2410) | Analysis | 
-| ---------------| ------------------------------|-----------------------------------|----------|
-| ROUGE-1        |           0.62                |    0.54                           |  greater overlap of unigrams (single words) with the reference summaries.
-| ROUGE-L        |           0.55                |    0.47                           |  the fine-tuned model generates more fluent and coherent sentences.
-| BLEU           |           0.29                |    0.16                           | The fine-tuned model's higher BLEU score reflects its ability to produce summaries that are both more accurate and grammatically correct.
+I also evaluated the models on a text summarization task. 
+ROUGE scores measure the overlap of n-grams between the generated and reference summaries, while BLEU measures the fluency and accuracy of the generated text.
+| Metric         | Base Model (ministral-8b-2410) | Fine-tuned (ministral-3b-latest) |  Δ Metric    | 
+| ---------------| ------------------------------|-----------------------------------|--------------|
+| ROUGE-1        |           0.54                |    **0.63**                       | 0.09
+| ROUGE-L        |           0.47                |    **0.56**                       |  0.08
+| BLEU           |           0.17                |    **0.30**                       |  0.13
+
+- **Consistent gains across all metrics**: The fine-tuned model outperforms the baseline on ROUGE-1, ROUGE-L, and BLEU, suggesting it produces summaries that are both more lexically similar to the references and better aligned with their structure.
+
+- **BLEU improvement** is the most notable (+0.129, +74% relative), indicating the fine-tuned model generates more precise n-gram matches.
+
+- **ROUGE-1 and ROUGE-L improvements** (~+0.086–0.087):  better recall and improved ability to capture key terms and longer matching sequences, which is important in legal text where preserving critic-al wording is essential.
+
+The balanced improvements suggest the fine-tuned model is not just memorizing common phrases but has learned domain-specific summarization patterns for legal clauses.
+
 
 ## Streamlit UI
 ### How to run
