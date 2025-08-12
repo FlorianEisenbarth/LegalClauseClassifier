@@ -29,16 +29,18 @@ def load_data(file_path) -> tuple:
     with open(file_path, "r", encoding="utf-8") as f:
         for line in f:
             obj = json.loads(line)
-            
-            gt_clause = json.loads(obj["ground_truth"])["clause_type"].strip().lower()
-            pred_clause = json.loads(obj["prediction"])["clause_type"].strip().lower()
-            gt_summary = json.loads(obj["ground_truth"])["summary"].strip().lower()
-            pred_summary = json.loads(obj["prediction"])["summary"].strip().lower()
+            if obj['prediction'] == None:
+                logging.info(f"Warning: {file_path} contain an error.\n{obj['error']}")
+            else:
+                gt_clause = json.loads(obj["ground_truth"])["clause_type"].strip().lower()
+                pred_clause = json.loads(obj["prediction"])["clause_type"].strip().lower()
+                gt_summary = json.loads(obj["ground_truth"])["summary"].strip().lower()
+                pred_summary = json.loads(obj["prediction"])["summary"].strip().lower()
 
-            y_true_clauses.append(gt_clause)
-            y_pred_clause.append(pred_clause)
-            y_true_summary.append(gt_summary)
-            y_pred_summary.append(pred_summary)
+                y_true_clauses.append(gt_clause)
+                y_pred_clause.append(pred_clause)
+                y_true_summary.append(gt_summary)
+                y_pred_summary.append(pred_summary)
     return np.array(y_true_clauses), np.array(y_true_summary), np.array(y_pred_clause), np.array(y_pred_summary)
 
 
