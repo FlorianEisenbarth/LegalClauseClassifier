@@ -14,7 +14,7 @@ Bootstrap 95% CI for improvement: [0.145, 0.193]
 One-sided p-value (improved > baseline): 0.000999
 
 ==============================
-Per-Class F1 Changes
+Per-Class F1-micro Changes
 ==============================
 Class                                              | Baseline | Improved |     Δ F1
 -------------------------------------------------------------------------------------
@@ -59,3 +59,102 @@ joint ip ownership                                 |    0.750 |    0.607 |   -0.
 no-solicit of customers                            |    0.444 |    0.222 |   -0.222
 license grant                                      |    0.901 |    0.328 |   -0.572
 price restrictions                                 |    1.000 |    0.000 |   -1.000
+
+
+==============================
+Classification report Baseline
+==============================
+                                              precision    recall  f1-score  support
+price restrictions                             0.142857  1.000000  0.250000      1.0
+most favored nation                            1.000000  0.333333  0.500000      6.0
+unlimited/all-you-can-eat-license              0.500000  0.250000  0.333333      8.0
+third party beneficiary                        0.466667  0.875000  0.608696      8.0
+no-solicit of customers                        0.571429  0.444444  0.500000      9.0
+source code escrow                             1.000000  0.700000  0.823529     10.0
+affiliate license-licensor                     0.000000  0.000000  0.000000     11.0
+non-disparagement                              0.578947  0.785714  0.666667     14.0
+no-solicit of employees                        0.888889  0.941176  0.914286     17.0
+competitive restriction exception              0.333333  0.041667  0.074074     24.0
+notice period to terminate renewal             0.136364  0.120000  0.127660     25.0
+liquidated damages                             0.444444  0.592593  0.507937     27.0
+joint ip ownership                             0.375000  0.750000  0.500000     28.0
+uncapped liability                             0.366667  0.392857  0.379310     28.0
+affiliate license-licensee                     0.000000  0.000000  0.000000     29.0
+volume restriction                             0.424242  0.466667  0.444444     30.0
+irrevocable or perpetual license               0.350000  0.233333  0.280000     30.0
+renewal term                                   0.320000  0.941176  0.477612     34.0
+warranty duration                              0.818182  0.514286  0.631579     35.0
+covenant not to sue                            1.000000  0.052632  0.100000     38.0
+termination for convenience                    0.373333  0.700000  0.486957     40.0
+non-compete                                    0.372093  0.780488  0.503937     41.0
+non-transferable license                       0.200000  0.106383  0.138889     47.0
+change of control                              1.000000  0.416667  0.588235     48.0
+post-termination services                      0.913043  0.388889  0.545455     54.0
+parties                                        0.754386  0.796296  0.774775     54.0
+revenue/profit sharing                         0.937500  0.272727  0.422535     55.0
+cap on liability                               0.576923  0.267857  0.365854     56.0
+audit rights                                   0.975610  0.701754  0.816327     57.0
+expiration date                                0.809524  0.283333  0.419753     60.0
+ip ownership assignment                        0.884615  0.383333  0.534884     60.0
+minimum commitment                             0.897436  0.583333  0.707071     60.0
+governing law                                  0.983871  1.000000  0.991870     61.0
+effective date                                 0.636364  0.112903  0.191781     62.0
+insurance                                      0.968254  0.938462  0.953125     65.0
+license grant                                  0.226054  0.880597  0.359756     67.0
+agreement date                                 0.482517  1.000000  0.650943     69.0
+right of first refusal, offer or negotiation   0.809524  0.478873  0.601770     71.0
+document name                                  0.647059  0.150685  0.244444     73.0
+anti-assignment                                0.885714  0.826667  0.855172     75.0
+exclusivity                                    0.806452  0.324675  0.462963     77.0
+macro avg                                      0.606275  0.508020  0.481357   1664.0
+micro avg                                      0.546149  0.515625  0.530448   1664.0
+weighted avg                                   0.669377  0.515625  0.514097   1664.0
+
+==============================
+Classification report Improved
+==============================
+                                              precision    recall  f1-score      support
+accuracy                                       0.698918  0.698918  0.698918     0.698918
+price restrictions                             0.000000  0.000000  0.000000     1.000000
+most favored nation                            0.666667  0.333333  0.444444     6.000000
+third party beneficiary                        0.600000  0.750000  0.666667     8.000000
+unlimited/all-you-can-eat-license              1.000000  0.375000  0.545455     8.000000
+no-solicit of customers                        0.500000  0.222222  0.307692     9.000000
+source code escrow                             1.000000  0.700000  0.823529    10.000000
+affiliate license-licensor                     0.000000  0.000000  0.000000    11.000000
+non-disparagement                              0.846154  0.785714  0.814815    14.000000
+no-solicit of employees                        0.894737  1.000000  0.944444    17.000000
+competitive restriction exception              0.750000  0.125000  0.214286    24.000000
+notice period to terminate renewal             0.142857  0.040000  0.062500    25.000000
+liquidated damages                             0.769231  0.740741  0.754717    27.000000
+joint ip ownership                             0.809524  0.607143  0.693878    28.000000
+uncapped liability                             0.476190  0.357143  0.408163    28.000000
+affiliate license-licensee                     0.555556  0.172414  0.263158    29.000000
+irrevocable or perpetual license               0.318182  0.466667  0.378378    30.000000
+volume restriction                             0.666667  0.533333  0.592593    30.000000
+renewal term                                   0.545455  0.882353  0.674157    34.000000
+warranty duration                              0.840000  0.600000  0.700000    35.000000
+covenant not to sue                            0.878788  0.763158  0.816901    38.000000
+termination for convenience                    0.618182  0.850000  0.715789    40.000000
+non-compete                                    0.392857  0.804878  0.528000    41.000000
+non-transferable license                       0.358025  0.617021  0.453125    47.000000
+change of control                              0.756757  0.583333  0.658824    48.000000
+parties                                        0.875000  0.907407  0.890909    54.000000
+post-termination services                      0.714286  0.740741  0.727273    54.000000
+revenue/profit sharing                         0.838710  0.945455  0.888889    55.000000
+cap on liability                               0.548387  0.607143  0.576271    56.000000
+audit rights                                   0.881356  0.912281  0.896552    57.000000
+ip ownership assignment                        0.787879  0.866667  0.825397    60.000000
+expiration date                                0.746032  0.783333  0.764228    60.000000
+minimum commitment                             0.742857  0.866667  0.800000    60.000000
+governing law                                  1.000000  1.000000  1.000000    61.000000
+effective date                                 0.692308  0.145161  0.240000    62.000000
+insurance                                      0.954545  0.969231  0.961832    65.000000
+license grant                                  0.385965  0.328358  0.354839    67.000000
+agreement date                                 0.573913  0.956522  0.717391    69.000000
+right of first refusal, offer or negotiation   0.826087  0.802817  0.814286    71.000000
+document name                                  0.955882  0.890411  0.921986    73.000000
+anti-assignment                                0.925373  0.826667  0.873239    75.000000
+exclusivity                                    0.646154  0.545455  0.591549    77.000000
+macro avg                                      0.670258  0.619604  0.617223  1664.000000
+weighted avg                                   0.712860  0.698918  0.683926  1664.000000

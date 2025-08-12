@@ -2,7 +2,7 @@
 import json
 import os
 import logging
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, classification_report
 import evaluate
 from config import parse_args_eval
 import pandas as pd
@@ -161,7 +161,7 @@ def evaluate_classification(y_true_base: list,
         f.write(f"One-sided p-value (improved > baseline): {p_value:.6f}\n\n")
 
         f.write("==============================\n")
-        f.write("Per-Class F1 Changes\n")
+        f.write("Per-Class F1-micro Changes\n")
         f.write("==============================\n")
 
         classes = sorted(list(set(y_true_base)))
@@ -170,7 +170,7 @@ def evaluate_classification(y_true_base: list,
         for cls in classes:
             mask = (y_true_base == cls)
             f1_b = f1_score(y_true_base[mask], y_pred_base[mask], average="micro", labels=labels, zero_division=0)
-            f1_i = f1_score(y_true_impr[mask], y_pred_impr[mask], average="micro", labels=labels, zero_division=0)
+            f1_i = f1_score(y_true_impr[mask], y_pred_impr[mask], average="micro", labels=labels, zero_division=0)                          
             per_class_results.append((cls, f1_b, f1_i, f1_i - f1_b))
 
         per_class_results.sort(key=lambda x: x[3], reverse=True)
@@ -179,6 +179,27 @@ def evaluate_classification(y_true_base: list,
         f.write("-" * 85 + "\n")
         for cls, f1_b, f1_i, delta in per_class_results:
             f.write(f"{cls:50} | {f1_b:8.3f} | {f1_i:8.3f} | {delta:8.3f}\n")
+        
+        f.write("\n\n")
+        f.write("==============================\n")
+        f.write("Classification report Baseline\n")
+        f.write("==============================\n")
+        
+        f.write(pd.DataFrame(
+            classification_report(y_true_base, y_pred_base, labels=labels, zero_division=0, output_dict=True)
+            ).T.sort_values("support").to_string()+"\n\n"
+            )
+        
+        f.write("==============================\n")
+        f.write("Classification report Improved\n")
+        f.write("==============================\n")
+        
+        f.write(pd.DataFrame(
+            classification_report(y_true_impr, y_pred_impr, labels=labels, zero_division=0, output_dict=True)
+            ).T.sort_values("support").to_string()
+            )
+        
+        
 
     print(f"Analysis complete. Results have been saved to '{output_file}'.")
     
