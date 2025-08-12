@@ -82,6 +82,12 @@ def main(args):
     
     client = Mistral(api_key=mistral_key)
     
+
+    all_models = client.models.list()
+    model_ids = {m.id for m in all_models.data}
+    if args.model_id not in model_ids:
+        raise ValueError(f"Model ID '{args.model_id}' is not a valid model.")
+    
     test_data = load_jsonl(args.test_file)
     predictions = run_inference(client, model=args.model_id, messages_list=test_data)
     save_jsonl(predictions, args.output_path)
