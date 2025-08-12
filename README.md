@@ -44,7 +44,10 @@ python scripts/inference.py \
 ```
 ### 3. Fine-tune mistral model
 ```bash
-python scripts/finetune_mistral.py --base_model_finetuning ministral-3b-latest            
+python scripts/finetune_mistral.py \
+    --base_model_finetuning "ministral-3b-latest" \
+    --train_path "dataset/cuad_classification_summary_train_balanced.jsonl" \
+    --eval_path "dataset/cuad_classification_summary_eval_balanced.jsonl"
 ```
 When the finetuning is over the script will output the finetuned model id
 ### 4. inference with finetuned model
@@ -55,8 +58,9 @@ python scripts/inference.py \
     --test_file "dataset/cuad_classification_summary_test_balanced.jsonl"  
 ```
 ### 5. Evaluation
+(if you haven't run the pipeline, you can use <code>outputs/base_balanced_classification_summary.json</code> and <code>outputs/finetuned_balanced_classification_summary.jsonl</code> to run the evaluation)
 ```bash
-python scripts/evaluate.py \
+python scripts/evaluation.py \
     --predictions_path "outputs/finetuned_output.jsonl" \
     --references_path "outputs/base_output.jsonl" \
     --output_path "outputs/eval/"
